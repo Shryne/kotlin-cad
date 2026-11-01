@@ -1,0 +1,53 @@
+# Build products and machine state
+.gradle/
+.kotlin/
+build/
+.idea/
+.vscode/
+.DS_Store
+*.iml
+__pycache__/
+*.py[cod]
+*.log
+*.sock
+# Never publish private designs, recovery files, exports or generated fixtures
+models/
+recovered/
+samples/
+CAD Models/
+*.kcad
+*.stl
+*.obj
+*.step
+*.stp
+*.3mf
+*.blend
+*.png
+*.jpg
+*.jpeg
+*.mov
+*.mp4
+# Credentials and assistant runtime
+.env
+.env.*
+!.env.example
+.assistant/
+.codex/
+.aws/
+.ssh/
+**/auth.json
+**/chatgpt-auth.json
+**/credentials.json
+*.pem
+*.key
+*.p12
+*.pfx
+# Local packages
+*.app/
+*.dmg
+*.zip
+*.tar.gz
+
+# Explicitly reviewed public README images only
+!docs/images/object-colors.png
+!docs/images/linked-parts.png

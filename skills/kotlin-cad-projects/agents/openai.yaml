@@ -1,0 +1,6 @@
+interface:
+  display_name: "Kotlin CAD Projects"
+  short_description: "Model with saved revisions and durable project notes"
+  default_prompt: "Use $kotlin-cad-projects to start or continue my CAD modelling project with its saved revisions and next steps."
+policy:
+  allow_implicit_invocation: true

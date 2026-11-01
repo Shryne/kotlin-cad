@@ -1,0 +1,187 @@
+{
+  "tools": [
+    {
+      "name": "cad_set_body_color",
+      "description": "Set a body's saved base display color (#RRGGBB). Omit color to reset to default. Area colors override this base. Undo/redo and .kcad persistence; no geometry changes. Returns model with appearance per body.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Existing body ID."
+          },
+          "color": {
+            "type": "string",
+            "description": "Opaque sRGB #RRGGBB; omit to reset."
+          }
+        },
+        "required": [
+          "bodyId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_set_body_color",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_get_color_regions",
+      "description": "Read colorable coplanar surface patches, local bounds/normals, sourceRevision and current appearance. Patches can include disconnected coplanar triangles. Curved surfaces have multiple faceted patches; select multiple IDs or use a spatial zone. Page with offset/limit. Read again after geometry changes.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Existing body ID."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Zero-based page offset, default 0."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Page size 1..200, default 100."
+          }
+        },
+        "required": [
+          "bodyId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_get_color_regions",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_set_area_color",
+      "description": "Create or replace one named area color. Requires EITHER regionIds plus sourceRevision from cad_get_color_regions OR min/max coordinates (millimeters in body-local space, before feature position translation). Spatial zones color triangles whose centroids lie inside; boundaries follow tessellation, not a geometry cut. Newest/updated area wins overlaps. Patch colors expire safely after geometry edits and appear in staleAreaIds; spatial zones re-evaluate. Preserves geometry; supports undo/redo and save/load.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Existing body ID."
+          },
+          "areaId": {
+            "type": "string",
+            "description": "Stable area ID chosen by caller, 1..128 characters; reuse to edit."
+          },
+          "name": {
+            "type": "string",
+            "description": "Area label, 1..128 characters."
+          },
+          "color": {
+            "type": "string",
+            "description": "Opaque sRGB #RRGGBB."
+          },
+          "sourceRevision": {
+            "type": "string",
+            "description": "Current revision from cad_get_color_regions; required with regionIds."
+          },
+          "regionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Patch ID."
+            },
+            "minItems": 1,
+            "maxItems": 1000
+          },
+          "min": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              },
+              "y": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              },
+              "z": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false
+          },
+          "max": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              },
+              "y": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              },
+              "z": {
+                "type": "number",
+                "description": "Body-local millimeters."
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "z"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "bodyId",
+          "areaId",
+          "name",
+          "color"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_set_area_color",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_remove_area_color",
+      "description": "Remove a saved color area and reveal underlying areas or the body color. Undo/redo supported.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Existing body ID."
+          },
+          "areaId": {
+            "type": "string",
+            "description": "Saved area ID."
+          }
+        },
+        "required": [
+          "bodyId",
+          "areaId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_remove_area_color",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

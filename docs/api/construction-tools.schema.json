@@ -1,0 +1,500 @@
+{
+  "tools": [
+    {
+      "name": "cad_get_model",
+      "description": "Read every body's stable id, world-space minimum/maximum bounds and dimensions, plus sketches, features, parameters, units and display state in the running local CAD viewer.",
+      "inputSchema": {
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_get_model",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_get_feature",
+      "description": "Read an independent extrusion, face extrusion, primitive or mirror feature, its body and stable semantic face IDs where available. Unreconstructable mesh faces are not offered as planar references. No mutation.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Feature id from cad_get_model features."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_get_feature",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_preview_construction",
+      "description": "Preview one closed connected solid from a constructive tree without an import or document mutation. Optional parameters are NEW project parameters evaluated only in the preview. Returns provisional featureId/bodyId, exact BRep world bounds/dimensions, solidCount, volumeMm3 and validation. Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+      "inputSchema": {
+        "properties": {
+          "shape": {
+            "type": "object",
+            "description": "Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+            "additionalProperties": true
+          },
+          "parameters": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Unique new parameter name."
+                },
+                "expression": {
+                  "type": "string",
+                  "description": "Dimensioned formula, e.g. 4 mm or 20 deg."
+                }
+              },
+              "required": [
+                "name",
+                "expression"
+              ]
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Feature name. Default Konstruktion on create; retained when omitted on update."
+          }
+        },
+        "required": [
+          "shape"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_preview_construction",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_create_construction",
+      "description": "Create one separate editable parametric solid directly in any project. Optional NEW parameters and geometry commit atomically; existing parameters are available in expressions. Disconnected results are rejected: one feature per physical component. Returns stable featureId/bodyId, exact BRep world bounds/dimensions, solidCount, volumeMm3 and validation. Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+      "inputSchema": {
+        "properties": {
+          "shape": {
+            "type": "object",
+            "description": "Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+            "additionalProperties": true
+          },
+          "parameters": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Unique new parameter name."
+                },
+                "expression": {
+                  "type": "string",
+                  "description": "Dimensioned formula, e.g. 4 mm or 20 deg."
+                }
+              },
+              "required": [
+                "name",
+                "expression"
+              ]
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Feature name. Default Konstruktion on create; retained when omitted on update."
+          }
+        },
+        "required": [
+          "shape"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_create_construction",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_update_construction",
+      "description": "Replace the tree of an existing nativeShape construction feature, preserving feature/body ID and position. Optional name replaces its name. Optional parameters add NEW project parameters only; use cad_set_parameter for existing parameters. Full validation before atomic commit. Returns IDs, BRep bounds/dimensions, count, volume and validity. Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+      "inputSchema": {
+        "properties": {
+          "shape": {
+            "type": "object",
+            "description": "Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+            "additionalProperties": true
+          },
+          "parameters": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Unique new parameter name."
+                },
+                "expression": {
+                  "type": "string",
+                  "description": "Dimensioned formula, e.g. 4 mm or 20 deg."
+                }
+              },
+              "required": [
+                "name",
+                "expression"
+              ]
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Feature name. Default Konstruktion on create; retained when omitted on update."
+          },
+          "id": {
+            "type": "string",
+            "description": "Existing nativeShape feature ID."
+          }
+        },
+        "required": [
+          "id",
+          "shape"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_update_construction",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_delete_feature",
+      "description": "Delete one generated feature/body, with undo/redo. Rejects deletion while another feature or attached sketch depends on it; no cascade. Keeps named parameters and source sketches. Import deletion uses cad_delete_import.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Generated feature ID from cad_get_model."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_delete_feature",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_check_interference",
+      "description": "Read-only pairwise solid interference for 2 to 8 body IDs in world assembly positions, including hidden bodies. Returns intersectionVolumeMm3, distanceMm and status separated/contact/overlap. Overlap means volume > volumeToleranceMm3; contact means distance <= contactToleranceMm with volume below threshold (near-contact included). Native constructions, primitives and lofts use exact BRep; other bodies use closed faceted mesh solids (max 10000 triangles), explicitly labelled faceted-solid. Invalid/open meshes fail, never guessed from bounding boxes.",
+      "inputSchema": {
+        "properties": {
+          "bodyIds": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "contactToleranceMm": {
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 1.0,
+            "description": "Distance tolerance for contact, default 0.00001 mm."
+          },
+          "volumeToleranceMm3": {
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 1.0,
+            "description": "Overlap volume threshold, default 0.000001 mm³."
+          }
+        },
+        "required": [
+          "bodyIds"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_check_interference",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_export_bodies",
+      "description": "Export selected committed bodies to one STL/OBJ. For individual files, call once per body. Hidden bodies may be selected. Temporary print orientation transforms export meshes only; document, camera, assembly positions and history remain unchanged. Rotation X then Y then Z about origin, then translation, then optional placeOnBed sets combined min Z to zero. Returns exported bounds and dimensions per body. Separate selected bodies are not unioned.",
+      "inputSchema": {
+        "properties": {
+          "bodyIds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "path": {
+            "type": "string",
+            "description": "Absolute .stl or .obj destination; parent directory must exist."
+          },
+          "overwrite": {
+            "type": "boolean",
+            "description": "Allow replacing destination; default false."
+          },
+          "orientation": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "rotationX": {
+                "type": "string",
+                "description": "Angle expression, default 0 deg."
+              },
+              "rotationY": {
+                "type": "string",
+                "description": "Angle expression, default 0 deg."
+              },
+              "rotationZ": {
+                "type": "string",
+                "description": "Angle expression, default 0 deg."
+              },
+              "originX": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "originY": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "originZ": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "x": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "y": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "z": {
+                "type": "string",
+                "description": "Length expression, default 0 mm. x/y/z are translation after rotation."
+              },
+              "placeOnBed": {
+                "type": "boolean",
+                "description": "After transforming, set combined min Z to zero. Default false."
+              }
+            }
+          }
+        },
+        "required": [
+          "bodyIds",
+          "path"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_export_bodies",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_inspect_construction",
+      "description": "Evaluate a bounded constructive solid tree and return exact BRep edge curve midpoints (at), endpoints, lengths and curve types for fillet/chamfer selection. Existing project parameters are resolved automatically; optional parameters define additional new names for inspection only. No document mutation. Inspect the exact child shape before selecting edges; indices are not persistent. Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+      "inputSchema": {
+        "properties": {
+          "shape": {
+            "type": "object",
+            "description": "Shape nodes: box{x,y,z}, cylinder{radius,height}, sphere{radius}, cone{radius1,radius2,height} for countersinks, extrude{outer:[[x,y,z],...],holes:[[[x,y,z],...]],vector:[x,y,z]}, union/cut/intersect{a:shape,b:shape}, translate{shape,offset:[x,y,z]}, rotate{shape,axis:[x,y,z],origin:[x,y,z],angle:radians}, fillet{shape,radius,edges:[{at:[x,y,z],tolerance:0.001}]}, chamfer{shape,distance,edges:[{at:[x,y,z],tolerance:0.001}]}. extrudeCurves{outer:[segments],holes:[[segments]],vector:[x,y,z]} accepts connected closed planar wires of segments: line{kind,start,end}, arc{kind,start,mid,end}, circle{kind,center,normal,radius}, bezier{kind,controlPoints:[four XYZ points]}. Reconcile neighboring fitted endpoints before constructing a closed wire. Coordinates and lengths in mm; replace any length with {expression: 'width / 2'} or {parameter:'width'}. Rotation angle can use {angleExpression:'slope'} (angle parameter). Axis components are dimensionless; use {scalarExpression:'axisX'} for dimensionless parameter expressions. Edge at is measured curve parameter midpoint from cad_inspect_construction, in the child shape coordinates; selectors must match exactly one edge. Radii/distances must be positive; impossible operations fail atomically. Max 512 nodes, depth 32, 128 selected edges. No references to imported mesh triangles or external files.",
+            "additionalProperties": true
+          },
+          "parameters": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Unique new parameter name."
+                },
+                "expression": {
+                  "type": "string",
+                  "description": "Dimensioned formula, e.g. 4 mm or 20 deg."
+                }
+              },
+              "required": [
+                "name",
+                "expression"
+              ]
+            }
+          }
+        },
+        "required": [
+          "shape"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_inspect_construction",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_open_project",
+      "description": "Open a self-contained .kcad project. Unsaved changes are preserved unless discardChanges is explicitly true.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute path to an existing .kcad project."
+          },
+          "discardChanges": {
+            "type": "boolean",
+            "description": "Explicitly discard unsaved document edits. Default false."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_open_project",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_save_project",
+      "description": "Save the geometry, parameters, display and camera in a self-contained .kcad file. Existing files require overwrite=true.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute destination path ending in .kcad."
+          },
+          "overwrite": {
+            "type": "boolean",
+            "description": "Explicitly allow replacing an existing file. Default false."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_save_project",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_set_parameter",
+      "description": "Create or update a named parameter. Recomputes dependencies and validates dimensions. Does not yet change imported mesh geometry.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter identifier, e.g. width."
+          },
+          "expression": {
+            "type": "string",
+            "description": "Arithmetic expression, e.g. 60 mm or width / 2."
+          }
+        },
+        "required": [
+          "name",
+          "expression"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_set_parameter",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_undo",
+      "description": "Undo the last parameter or display change. Camera navigation is not recorded.",
+      "inputSchema": {
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_undo",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_redo",
+      "description": "Redo a previously undone document change.",
+      "inputSchema": {
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_redo",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

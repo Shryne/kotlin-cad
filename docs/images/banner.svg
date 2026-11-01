@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="380" viewBox="0 0 1280 380" role="img" aria-labelledby="title desc">
+<title id="title">Kotlin CAD — define, reuse, refine</title>
+<desc id="desc">A dark blue banner with an illustrated modular solid, dimension lines and the words Parametric modelling. Local geometry. AI-ready tools.</desc>
+<defs>
+  <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101c30"/><stop offset="1" stop-color="#172940"/></linearGradient>
+  <linearGradient id="top" x2="1" y2="1"><stop stop-color="#91d2ff"/><stop offset="1" stop-color="#5b93f7"/></linearGradient>
+  <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#8bafdd" stroke-opacity=".08"/></pattern>
+</defs>
+<rect width="1280" height="380" rx="20" fill="url(#bg)"/>
+<rect width="1280" height="380" rx="20" fill="url(#grid)"/>
+<path d="M682 34V346" stroke="#8ba9cb" stroke-opacity=".16"/>
+<g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif">
+  <rect x="54" y="48" width="226" height="30" rx="15" fill="#263f5a"/>
+  <circle cx="73" cy="63" r="4" fill="#62ddb1"/>
+  <text x="87" y="68" fill="#c5dfef" font-size="12" letter-spacing="2">DEFINE · REUSE · REFINE</text>
+  <text x="52" y="163" fill="#f5f9ff" font-size="68" font-weight="700" letter-spacing="-2">Kotlin CAD</text>
+  <text x="55" y="212" fill="#b5c9e1" font-size="23">Parametric modelling. Local geometry.</text>
+  <text x="55" y="246" fill="#b5c9e1" font-size="23">AI-ready tools.</text>
+  <g fill="#87a5c9" font-size="13" letter-spacing="1.5">
+    <text x="56" y="321">EDITABLE SOLIDS</text><circle cx="231" cy="316" r="2"/>
+    <text x="248" y="321">LINKED PARTS</text><circle cx="393" cy="316" r="2"/>
+    <text x="410" y="321">LOCAL MCP</text>
+  </g>
+</g>
+<g stroke-linejoin="round">
+  <path d="M748 274l194-99 248 119-197 70z" fill="#091626" opacity=".42"/>
+  <g stroke="#9dc6f3" stroke-opacity=".24" stroke-dasharray="5 7" fill="none">
+    <path d="M794 184v105M946 108v105M1100 181v105"/>
+  </g>
+  <path d="M786 263l159-76 165 77-159 79z" fill="#365c93" stroke="#557fb0"/>
+  <path d="M786 263v17l165 79v-16z" fill="#24426c"/>
+  <path d="M951 343v16l159-78v-17z" fill="#193654"/>
+  <path d="M796 184l150-74 154 73-150 75z" fill="url(#top)" stroke="#a6d8ff"/>
+  <path d="M796 184v66l154 76v-68z" fill="#3d77cc" stroke="#649beb"/>
+  <path d="M950 258v68l150-76v-67z" fill="#24518c" stroke="#649beb"/>
+  <path d="M842 164l103-50 107 51-103 51z" fill="#172b47" stroke="#b6e1ff"/>
+  <path d="M842 164v21l107 52v-21z" fill="#294b79"/>
+  <path d="M949 216v21l103-52v-20z" fill="#11243e"/>
+  <path d="M1022 109l58-28 59 28-58 29z" fill="#77e0bb" stroke="#adf4d7"/>
+  <path d="M1022 109v34l59 29v-34z" fill="#37ad88"/>
+  <path d="M1081 138v34l58-29v-34z" fill="#237b68"/>
+  <g stroke="#8eafd3" stroke-width="1.2" fill="none">
+    <path d="M790 99l155-75 164 78M784 90l12 18M1103 93l12 18"/>
+    <path d="M1140 192v91m-6-91h12m-12 91h12"/>
+  </g>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="12" fill="#a8c8e8">
+    <text x="928" y="53">width</text><text x="1153" y="241">height</text>
+  </g>
+</g>
+</svg>

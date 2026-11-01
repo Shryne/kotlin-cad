@@ -1,0 +1,560 @@
+{
+  "tools": [
+    {
+      "name": "cad_apply_batch",
+      "description": "Atomically stage 1..256 geometry, parameter, placement and color changes, validate the final dependency graph, and publish once as one undo step. Returns an asynchronous job; poll cad_get_assembly_job. Failure, cancellation or concurrent document edits do not commit the candidate. Intermediate definitions need not be valid. put_feature creates/replaces full canonical feature JSON with caller-chosen stable ID; use cad_get_feature for edits. Existing IDs cannot change feature type. Area selectors resolve against final geometry and apply in their listed order. Expensive identical geometry is cached; color/placement changes avoid native rebuilds.",
+      "inputSchema": {
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "properties": {
+                "op": {
+                  "type": "string",
+                  "enum": [
+                    "set_parameter",
+                    "delete_parameter",
+                    "put_feature",
+                    "delete_feature",
+                    "set_position",
+                    "set_body_color",
+                    "set_area_color",
+                    "remove_area_color"
+                  ]
+                },
+                "feature": {
+                  "type": "object",
+                  "description": "Full canonical primitive, nativeShape, loft, extrusion, faceExtrusion, mirror or instance feature JSON; required for put_feature."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "expression": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "bodyId": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "areaId": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "sourceRevision": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "x": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "y": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "z": {
+                  "type": "string",
+                  "description": "Operation field. Parameter: name/expression; feature deletion/position: id; colors: same fields as cad_set_body_color/cad_set_area_color/cad_remove_area_color."
+                },
+                "regionIds": {
+                  "type": "array",
+                  "description": "Current color patch IDs.",
+                  "items": {
+                    "type": "string",
+                    "description": "Existing stable ID."
+                  }
+                },
+                "min": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    },
+                    "y": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "y",
+                    "z"
+                  ],
+                  "additionalProperties": false
+                },
+                "max": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    },
+                    "y": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    },
+                    "z": {
+                      "type": "number",
+                      "description": "Millimeters."
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "y",
+                    "z"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "op"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "operations"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_apply_batch",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_get_assembly_job",
+      "description": "Read progress and result. Status running/committing/complete/failed/cancelled/stale. Only a completed batch changes the document. Cancellation is accepted while running, never during atomic commit. Reports are scoped to their snapshot; inspect stale status before using them.",
+      "inputSchema": {
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "Returned job ID."
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_get_assembly_job",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_cancel_assembly_job",
+      "description": "Cancel a running assembly job and its private geometry worker without affecting other jobs or the document. Idempotent; completed or committing jobs cannot be cancelled.",
+      "inputSchema": {
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "Returned job ID."
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_cancel_assembly_job",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_create_instance",
+      "description": "Create a linked, independently placed/rotated instance of an existing generated part. Stable ID, inherited/overridden colors, undo/redo and persistence. Returns a batch job; poll until complete before depending on the new body.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable instance ID. Optional for creation; required for update."
+          },
+          "name": {
+            "type": "string",
+            "description": "Instance label."
+          },
+          "sourceFeatureId": {
+            "type": "string",
+            "description": "Existing generated source body. Linked geometry uses source-local coordinates, excluding the source position. Nested instances allowed; cycles rejected."
+          },
+          "x": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "y": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "z": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "rotationX": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "rotationY": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "rotationZ": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "inheritColors": {
+            "type": "boolean",
+            "description": "Default true. Source triangle colors follow rotation; explicit instance base color replaces inheritance, instance areas override. Omit instance base color to inherit again."
+          }
+        },
+        "required": [
+          "sourceFeatureId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_create_instance",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_update_instance",
+      "description": "Edit an existing linked instance, preserving its ID. Omitted fields retain values. Returns a batch job; poll until complete.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable instance ID. Optional for creation; required for update."
+          },
+          "name": {
+            "type": "string",
+            "description": "Instance label."
+          },
+          "sourceFeatureId": {
+            "type": "string",
+            "description": "Existing generated source body. Linked geometry uses source-local coordinates, excluding the source position. Nested instances allowed; cycles rejected."
+          },
+          "x": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "y": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "z": {
+            "type": "string",
+            "description": "Placement length expression, e.g. 30 mm or pitch."
+          },
+          "rotationX": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "rotationY": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "rotationZ": {
+            "type": "string",
+            "description": "Angle expression, e.g. 90 deg. Rotations X then Y then Z about source-local origin, then translation."
+          },
+          "inheritColors": {
+            "type": "boolean",
+            "description": "Default true. Source triangle colors follow rotation; explicit instance base color replaces inheritance, instance areas override. Omit instance base color to inherit again."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_update_instance",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_check_assembly_path",
+      "description": "Start insertion/removal path screening. Reports first sampled collision; otherwise certifies segments only when exact distances exceed the displacement bound, or returns inconclusive. No sampled collision alone is NOT proof of clear motion. Uses native solids or closed faceted fallback. Progress/cancellation via assembly job tools; no document changes.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Moving body ID."
+          },
+          "obstacleIds": {
+            "type": "array",
+            "description": "1..16 fixed bodies, excluding moving body.",
+            "items": {
+              "type": "string",
+              "description": "Existing stable ID."
+            }
+          },
+          "stepMm": {
+            "type": "number",
+            "description": "Sample spacing .01..1000 mm, default 1. Max 201 samples and 256 body-pair tests per path."
+          },
+          "waypoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "description": "Millimeters."
+                },
+                "y": {
+                  "type": "number",
+                  "description": "Millimeters."
+                },
+                "z": {
+                  "type": "number",
+                  "description": "Millimeters."
+                }
+              },
+              "required": [
+                "x",
+                "y",
+                "z"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 2,
+            "maxItems": 32,
+            "description": "Ordered translation offsets relative to saved placement, in world millimeters. For insertion use an outside offset ending at zero; removal begins at zero. No rotation or deformation."
+          }
+        },
+        "required": [
+          "bodyId",
+          "obstacleIds",
+          "waypoints"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_check_assembly_path",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_check_retention",
+      "description": "Start six-axis straight escape-path probes. Reports directional blocking, not a proof of mechanical retention, strength, snap fit, friction or rotational locking. No deformation simulation. Progress/cancellation via assembly job tools.",
+      "inputSchema": {
+        "properties": {
+          "bodyId": {
+            "type": "string",
+            "description": "Moving body ID."
+          },
+          "obstacleIds": {
+            "type": "array",
+            "description": "1..16 fixed bodies, excluding moving body.",
+            "items": {
+              "type": "string",
+              "description": "Existing stable ID."
+            }
+          },
+          "stepMm": {
+            "type": "number",
+            "description": "Sample spacing .01..1000 mm, default 1. Max 201 samples and 256 body-pair tests per path."
+          },
+          "travelMm": {
+            "type": "number",
+            "description": "Probe travel .01..10000 mm, default 20 along each of six world axes."
+          }
+        },
+        "required": [
+          "bodyId",
+          "obstacleIds"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_check_retention",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_check_manufacturing",
+      "description": "Start configurable sampled mesh-thickness and clearance screening. Flags thin sections and small-feature candidates with positions; does not certify manufacturing or strength. Up to 8 bodies, 20000 triangles/body. Use cad_highlight_manufacturing to show warnings. Progress/cancellation via assembly job tools.",
+      "inputSchema": {
+        "properties": {
+          "bodyIds": {
+            "type": "array",
+            "description": "1..8 selected body IDs.",
+            "items": {
+              "type": "string",
+              "description": "Existing stable ID."
+            }
+          },
+          "minWallMm": {
+            "type": "number",
+            "description": ".01..100, default .8."
+          },
+          "minFeatureMm": {
+            "type": "number",
+            "description": ".01..100, default 1.2; candidate fragility threshold."
+          },
+          "minClearanceMm": {
+            "type": "number",
+            "description": ".00001..10, default .2; includes contact/overlap which may be intentional."
+          },
+          "samplesPerBody": {
+            "type": "integer",
+            "description": "8..512, default 128; bounded sampling can miss features."
+          }
+        },
+        "required": [
+          "bodyIds"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_check_manufacturing",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_highlight_manufacturing",
+      "description": "Show red viewport markers for the completed manufacturing job's thickness warnings. Rejects changed geometry or placement. No geometry/history changes. Clear with cad_clear_assembly_preview.",
+      "inputSchema": {
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "Completed manufacturing job ID."
+          }
+        },
+        "required": [
+          "jobId"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_highlight_manufacturing",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_get_assembly",
+      "description": "Read part counts grouped by linked source definition, instances, visible counts and stable IDs. Includes the source body in counts; independent identical bodies are separate definitions. No mutation.",
+      "inputSchema": {
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_get_assembly",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_compare_assembly",
+      "description": "Compare current project with a saved .kcad revision by stable IDs, definitions, parameters, colors and evaluated geometry/bounds. Read-only asynchronous job; does not open or overwrite the saved file.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute path of saved .kcad revision."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_compare_assembly",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_preview_exploded",
+      "description": "Show a transient radial exploded view preserving colors and saved assembly positions/history. Returns per-body offsets; illustrative only, not insertion/removal paths. Snapshot with cad_get_preview; clear with cad_clear_assembly_preview. Model picking is disabled during this preview.",
+      "inputSchema": {
+        "properties": {
+          "distanceMm": {
+            "type": "number",
+            "description": "Separation distance 0..10000 mm, default 20."
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_preview_exploded",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cad_clear_assembly_preview",
+      "description": "Restore assembly view/camera and remove analysis markers, without changing document or history.",
+      "inputSchema": {
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "title": "cad_clear_assembly_preview",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

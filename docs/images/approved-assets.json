@@ -1,0 +1,10 @@
+{
+  "object-colors.png": {
+    "sha256": "11ddb7de6436bbb1b9c463946bbd99ec2bcec5f69d478a044d79ff28b335f528",
+    "origin": "Reviewed viewport capture of synthetic acceptance-test geometry; no private designs, account UI or PNG metadata."
+  },
+  "linked-parts.png": {
+    "sha256": "2d203d03158fdd2162f59c479dc800ccaa60e7be37199eb7063ef06fec36809e",
+    "origin": "Reviewed viewport capture of synthetic acceptance-test geometry; no private designs, account UI or PNG metadata."
+  }
+}
